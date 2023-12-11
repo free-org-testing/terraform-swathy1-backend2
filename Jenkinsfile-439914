@@ -1,0 +1,25 @@
+pipeline {
+  agent any
+  stages {
+    stage ('Deploy (udkjn6)') {
+      steps {
+        sh script: '''
+ln -sf /usr/local/bin/helm3 /usr/local/bin/helm
+''', label: 'rlklcw'
+        sh script: 'helm package chart', label: 'ijhrf0'
+        withCredentials([usernamePassword(credentialsId: '', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
+
+        script {
+            sh script: '''
+curl -u$USER:$PASS -T terraform-swathy1-backend2-chart-0.1.0.tgz 'https://artifactory.dagility.com/artifactory/helm-local/terraform-swathy1-backend2-chart-0.1.0.tgz' 
+''', label: 'affcbf'
+        } // end step group script
+script { sh script: 'sleep 0.005', label: '4j2evm'}
+} // end step group
+        sh script: 'helm repo add terraform-swathy1-backend2 https://artifactory.dagility.com/artifactory/helm ', label: 'rvsu01'
+        sh script: 'helm repo update', label: 'mesfnb'
+        sh script: 'helm upgrade terraform-swathy1-backend2-deployment terraform-swathy1-backend2/terraform-swathy1-backend2-chart --install --values chart-values.yaml --namespace argocd --set ingress.hosts[0].host=${project.prefix?lower_case}-${component.code}-${project.environment?lower_case}.${project.properties.domain}', label: 'ixxrui'
+      } //end steps
+    } // end stage Deploy
+  }
+}
